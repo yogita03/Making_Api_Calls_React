@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
+import AddMovie from "./components/AddMovie";
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
- 
   // const dummyMovies = [
   //   {
   //     id: 1,
@@ -23,7 +23,7 @@ function App() {
   //     releaseDate: '2021-05-19',
   //   },
   // ];
-const fetchMoviesHandler = useCallback(async () => {
+  const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -31,10 +31,8 @@ const fetchMoviesHandler = useCallback(async () => {
       if (!response.ok) {
         throw new Error("Something went wrong!");
       }
-      
-      const data = await response.json();
 
-     
+      const data = await response.json();
 
       const transformedMovies = data.results.map((movieData) => {
         return {
@@ -55,15 +53,19 @@ const fetchMoviesHandler = useCallback(async () => {
   useEffect(() => {
     fetchMoviesHandler();
   }, [fetchMoviesHandler]);
-  
+
+  function addMovieHandler(movie) {
+    console.log(movie);
+  }
+
   let content = <p>Found no movies.</p>;
 
-  if (movies.length > 0){
+  if (movies.length > 0) {
     content = <MoviesList movies={movies} />;
   }
 
-  if(error) {
-    content = <p>{error}</p>
+  if (error) {
+    content = <p>{error}</p>;
   }
 
   if (isLoading) {
@@ -73,11 +75,12 @@ const fetchMoviesHandler = useCallback(async () => {
   return (
     <React.Fragment>
       <section>
-        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
+        <AddMovie onAddMovie={addMovieHandler} />
       </section>
       <section>
-       {content}
+        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
+      <section>{content}</section>
     </React.Fragment>
   );
 }
